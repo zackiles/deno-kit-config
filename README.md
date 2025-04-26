@@ -11,49 +11,108 @@ Combine dot-env, `Deno.env`, and general overrides into a simple unified global 
 > [!NOTE]
 > This is a **new** project and the documentation is unlikely to be comprehensive or accurate.
 
-## Usage
+## Features
 
-Install the library into your project:
+- 🦖 **Modern Deno Features:** Built with the latest Deno runtime features
+- 🔄 **Global Singleton:** Configure once, access anywhere - all modules get the same configuration instance
+- 🔒 **Type-Safe:** Returns a strongly-typed proxy object for safe access to config values
+- 🔁 **Auto-Sync:** Automatically keeps `Deno.env` variables in sync with config changes
+- ⚙️ **Flexible Configuration:** Merges multiple sources in order of precedence:
+  1. Runtime overrides
+  2. Custom env file (via `--config` flag)
+  3. Local `.env` file
+  4. `Deno.env` variables
+  5. Default values
+- 📝 **Customizable Logging:** Bring your own logger for better integration
+- 📦 **Dynamic Values:** Support for async functions and promises as default values
+
+## Installation
 
 ```bash
 deno add jsr:@deno-kit/config
 ```
 
-Import the `loadConfig` function from the module:
+## Usage
+
+### Basic Usage
 
 ```typescript
-import { loadConfig } from '@deno-kit/config' // jsr:@deno-kit/config if you're not using import maps
+import { loadConfig } from '@deno-kit/config'
 
-// Basic usage - returns default values if no env files exist
+// Initialize global config (do this once at app startup)
 const config = await loadConfig()
-console.log(config.DENO_ENV) // Access values like properties
 
-// Load from custom env file if it exists
-// Run your script like: deno run -A --config=prod.env script.ts
-const configWithFile = await loadConfig()
-console.log(configWithFile.CUSTOM_VAR) // Access values from prod.env
-
-// With overrides - highest precedence but preserves other values
-const configWithOverrides = await loadConfig({
-  API_KEY: 'override-key', // Overrides any API_KEY from env files
-  DATABASE_HOST: 'override-host', // Other env values are preserved
-})
-console.log(configWithOverrides.API_KEY) // Outputs: 'override-key'
-
-// Using a custom logger
-import { log } from '@std/log' // Example logger
-const configWithLogger = await loadConfig(null, log)
+// Access values like properties
+console.log(config.DENO_ENV) // "development" by default
+console.log(config.DATABASE_URL) // Value from .env or Deno.env
 ```
 
-See `src/lib.ts` JSDoc for more details on configuration sources and precedence.
+### With Environment Files
 
-## Features
+Create a `.env` file in your project root:
 
-- 🦖 **Modern Deno Features:** Built with the latest Deno runtime features.
-- ⚙️ **Flexible Configuration:** Merges defaults, `Deno.env`, `.env` files, custom env files (via `--config` flag), and runtime overrides.
-- 🔒 **Typed & Proxied:** Returns a strongly-typed proxy object for safe access and modification of config values (updates `Deno.env` automatically).
-- 📝 **Customizable Logging:** Allows providing a custom logger instance.
-- 📦 **Dynamic Value Resolution:** Supports asynchronous functions or Promises as default values.
+```env
+DATABASE_URL=postgres://localhost:5432/mydb
+API_KEY=secret123
+```
+
+The values will be automatically loaded when calling `loadConfig()`. You can also specify a custom env file:
+
+```bash
+deno run -A --config=prod.env script.ts
+```
+
+### With Runtime Overrides
+
+```typescript
+// Values passed to loadConfig() take highest precedence
+const config = await loadConfig({
+  API_KEY: 'override-key',
+  DATABASE_URL: 'postgres://prod-host/db',
+})
+
+// These values are now available to all modules
+console.log(config.API_KEY) // "override-key"
+console.log(Deno.env.get('API_KEY')) // Also "override-key" - stays in sync!
+```
+
+### Singleton Pattern Benefits
+
+The config object is a global singleton, meaning:
+
+1. Configure once at app startup, use anywhere
+2. All modules get the same configuration instance
+3. Changes are reflected everywhere immediately
+4. `Deno.env` stays in sync automatically
+
+```typescript
+// module1.ts
+import { loadConfig } from '@deno-kit/config'
+
+const config = await loadConfig({ INITIAL: 'value' })
+export function doSomething() {
+  console.log(config.INITIAL) // "value"
+}
+
+// module2.ts
+import { loadConfig } from '@deno-kit/config'
+
+const config = await loadConfig() // Returns same instance
+config.INITIAL = 'new-value' // Updates everywhere
+
+// Both the config object and Deno.env are updated
+console.log(config.INITIAL) // "new-value"
+console.log(Deno.env.get('INITIAL')) // "new-value"
+```
+
+### Custom Logger Integration
+
+```typescript
+import { log } from '@std/log'
+
+const config = await loadConfig(null, log)
+// Now uses your logger for all config-related logs
+```
 
 ## Development
 
@@ -64,6 +123,8 @@ deno task tests
 # Format / lint / type-check code
 deno task pre-publish
 ```
+
+For details on the release process and CI/CD workflows, see the [RELEASING.md](RELEASING.md) document.
 
 ## **Changelog**
 
