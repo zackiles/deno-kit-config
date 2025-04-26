@@ -1,7 +1,7 @@
 {
   // Schema deno.jsonc: @https://github.com/denoland/deno/blob/main/cli/schemas/config-file.v1.json
   "name": "@deno-kit/config",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Combine dot-env, Deno.env, and general overrides into a simple unified global config module for your application",
   "license": "MIT",
   "author": "Zachary Iles <zack.iles@gmail.com>",
