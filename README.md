@@ -3,8 +3,8 @@
 [![JSR Score](https://jsr.io/badges/@deno-kit/config/score)](https://jsr.io/@deno-kit/config)
 [![JSR](https://jsr.io/badges/@deno-kit/1.%20Clone%20this%20repository)](https://jsr.io/@deno-kit/config)
 [![JSR Scope](https://jsr.io/badges/@deno-kit})](https://jsr.io/@deno-kit})
-[![ci](https://github.com/zackiles/config/actions/workflows/ci.yml/badge.svg)](https://github.com/zackiles/config/actions/workflows/ci.yml)
-[![license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/zackiles/config/blob/main/LICENSE)
+[![ci](https://github.com/zackiles/deno-kit-config/actions/workflows/ci.yml/badge.svg)](https://github.com/zackiles/deno-kit-config/actions/workflows/ci.yml)
+[![license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/zackiles/deno-kit-config/blob/main/LICENSE)
 
 Combine dot-env, `Deno.env`, and general overrides into a simple unified global config module for your application.
 
