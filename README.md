@@ -13,10 +13,16 @@ Combine dot-env, `Deno.env`, and general overrides into a simple unified global 
 
 ## Usage
 
+Install the library into your project:
+
+```bash
+deno add jsr:@deno-kit/config
+```
+
 Import the `loadConfig` function from the module:
 
 ```typescript
-import { loadConfig } from '@deno-kit/config' // Or the appropriate JSR/URL path
+import { loadConfig } from '@deno-kit/config' // jsr:@deno-kit/config if you're not using import maps
 
 // Basic usage - returns default values if no env files exist
 const config = await loadConfig()
@@ -36,7 +42,7 @@ console.log(configWithOverrides.API_KEY) // Outputs: 'override-key'
 
 // Using a custom logger
 import { log } from '@std/log' // Example logger
-const configWithLogger = await loadConfig(undefined, log)
+const configWithLogger = await loadConfig(null, log)
 ```
 
 See `src/lib.ts` JSDoc for more details on configuration sources and precedence.
